@@ -2,20 +2,21 @@
         
 
 pipeline{
-        agent {
-                docker {
-                image 'maven:latest'
-                args '-v $HOME/.m2:/root/.m2'
-                }
-            }
-        
+         agent any
+          environment
+          {
+            VERSION = "${env.BUILD_ID}"
+          }
         stages{
-
-
-              stage('Quality Gate Statuc Check'){
-
-               
+              stage('Quality Gate Status Check'){
                   steps{
+                    agent {
+                       docker {
+                          image 'maven:latest'
+                          args '-v $HOME/.m2:/root/.m2'
+                              }   
+                          }
+        
                       script{
                       withSonarQubeEnv('sonar') { 
                       sh "mvn sonar:sonar"
@@ -26,9 +27,24 @@ pipeline{
                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
                       }
                     }
-		    sh "mvn clean install -U"
+		            sh "mvn clean install"
                   }
                 }  
+              }
+
+              stage(" build & deploy war file"){
+                steps{
+                  script{
+                    withCredentials([string(credentialsId: 'nexus_pass', variable: 'docker_pass')]) {
+                    sh '''
+                     docker built -t 54.242.92.101:8083/webapp:${VERSION} .
+                     docker login -u admin -p ${docker_pass} 54.242.92.101:8083
+                     docker push 54.242.92.101:8083/webapp:${VERSION}
+                     docker rmi 54.242.92.101:8083/webapp:${VERSION}
+                    '''
+                    }
+                  }
+                }
               }
 
 
