@@ -9,13 +9,14 @@ pipeline{
           }
         stages{
               stage('Quality Gate Status Check'){
-                  steps{
-                    agent {
+		      agent {
                        docker {
                           image 'maven:latest'
                           args '-v $HOME/.m2:/root/.m2'
                               }   
                           }
+                  steps{
+                    
         
                       script{
                       withSonarQubeEnv('sonar') { 
