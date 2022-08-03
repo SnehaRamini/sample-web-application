@@ -39,7 +39,7 @@ pipeline{
                   withCredentials([string(credentialsId: 'docker_password', variable: 'dockerpassword')]) {
                     sh '''
                      docker build -t 3.89.106.19:8083/webapp:${VERSION} .
-                     docker login --username admin --password-stdin $dockerpassword 3.89.106.19:8083
+                     echo "$dockerpassword" | docker login --username admin --password-stdin 3.89.106.19:8083
                      docker push 3.89.106.19:8083/webapp:${VERSION}
                      docker rmi 3.89.106.19:8083/webapp:${VERSION}
                     '''
