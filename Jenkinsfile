@@ -49,7 +49,15 @@ pipeline{
               }
 
 
-
+        	stage('ansible playbook'){
+			steps{
+			 	script{
+				   
+				    ansiblePlaybook become: true, installation: 'ansible', inventory: 'hosts', playbook: 'ansible.yaml'
+				}
+			}
+		}
+		
           
 	
 		
