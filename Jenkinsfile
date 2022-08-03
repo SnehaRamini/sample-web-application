@@ -36,10 +36,10 @@ pipeline{
               stage(" build & deploy war file"){
                 steps{
                   script{
-                   withCredentials([string(credentialsId: 'nexus_pass', variable: 'docker_pass')])  {
+                  withCredentials([string(credentialsId: 'docker_password', variable: 'dockerpassword')]) {
                     sh '''
                      docker build -t 3.89.106.19:8083/webapp:${VERSION} .
-                     docker login -u admin -p $docker_pass 3.89.106.19:8083
+                     docker login -u admin -p $dockerpassword 3.89.106.19:8083
                      docker push 3.89.106.19:8083/webapp:${VERSION}
                      docker rmi 3.89.106.19:8083/webapp:${VERSION}
                     '''
