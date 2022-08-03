@@ -49,11 +49,11 @@ pipeline{
               }
 
 
-        	stage('ansible playbook'){
+        	stage('k8s deployment'){
 			steps{
 			 	script{
 				   
-				    ansiblePlaybook become: true, installation: 'ansible', inventory: 'hosts', playbook: 'ansible.yaml'
+				    kubernetesDeploy(configs: "deployment.yaml", kubeconfigId: "kubeconfig")
 				}
 			}
 		}
